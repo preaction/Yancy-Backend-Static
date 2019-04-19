@@ -61,4 +61,12 @@ $t->get_ok( '/style.css', 'static file not handled' )
     ->content_like( qr{\Qh1 { font-size: 1.2em }} )
     ;
 
+my @items = $t->app->yancy->list( 'page' );
+is_deeply
+    [ sort map { $_->{path} } @items ],
+    [
+        'about/index', 'index',
+    ],
+    'list is complete and correct';
+
 done_testing;

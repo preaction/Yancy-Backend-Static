@@ -111,6 +111,7 @@ sub list {
     my @items;
     my $total = 0;
     PATH: for my $path ( sort $self->path->list_tree->each ) {
+        next unless $path =~ /[.](?:markdown|md)$/;
         my $item = eval { $self->_parse_content( $path->slurp ) };
         if ( $@ ) {
             warn sprintf 'Could not load file %s: %s', $path, $@;
@@ -195,7 +196,9 @@ sub _id_to_path {
 
 sub _path_to_id {
     my ( $self, $path ) = @_;
-    return $path->basename( '.markdown' );
+    my $dir = $path->dirname;
+    $dir =~ s/^\.//;
+    return join '/', grep !!$_, $dir, $path->basename( '.markdown' );
 }
 
 #=sub _parse_content
