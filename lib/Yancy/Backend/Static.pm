@@ -4,14 +4,43 @@ our $VERSION = '0.001';
 
 =head1 SYNOPSIS
 
+    use Mojolicious::Lite;
+    plugin Yancy => {
+        backend => 'static:/home/doug/www/preaction.me',
+        read_schema => 1,
+    };
+    get '/*id',
+        controller => 'yancy',
+        action => 'get',
+        collection => 'page',
+        id => 'index', # Default to index page
+        template => 'page',
+        ;
+    app->start;
+    __DATA__
+    @@ page.html.ep
+    <%== $item->{html} %>
+
 =head1 DESCRIPTION
 
 This L<Yancy::Backend> allows Yancy to work with a site made up of
-Markdown files with YAML frontmatter, like a L<Statocles> site.
+Markdown files with YAML frontmatter, like a L<Statocles> site. In other
+words, this module works with a flat-file database made up of YAML
++ Markdown files.
+
+=head2 Limitations
+
+This backend should support everything L<Yancy::Backend> supports, though
+some list() queries may not work (please make a pull request).
+
+=head2 Future Developments
+
+This backend could be enhanced to provide collections for static files
+(CSS, JavaScript, etc...) and templates.
 
 =head1 SEE ALSO
 
-L<Yancy>
+L<Yancy>, L<Statocles>
 
 =cut
 
