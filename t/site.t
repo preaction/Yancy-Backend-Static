@@ -23,7 +23,7 @@ $t->app->plugin( Yancy => {
 } );
 $t->app->routes->get( '/*id' )->to(
     'yancy#get',
-    collection => 'page',
+    collection => 'pages',
     id => 'index',
     template => 'page',
     layout => 'default',
@@ -61,7 +61,7 @@ $t->get_ok( '/style.css', 'static file not handled' )
     ->content_like( qr{\Qh1 { font-size: 1.2em }} )
     ;
 
-my @items = $t->app->yancy->list( 'page' );
+my @items = $t->app->yancy->list( 'pages' );
 is_deeply
     [ sort map { $_->{path} } @items ],
     [

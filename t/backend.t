@@ -24,11 +24,11 @@ my %index_page = (
     markdown => qq{# Index\n\nThis is my index page\n},
 );
 
-my $id = $be->create( page => \%index_page );
+my $id = $be->create( pages => \%index_page );
 is $id, 'index', 'id is returned';
 ok -e $temp->child( "$id.markdown" ), 'created index page exists';
 
-my $item = $be->get( page => $id );
+my $item = $be->get( pages => $id );
 ok $item, 'id from create() works for get()';
 is_deeply $item,
     {
@@ -37,7 +37,7 @@ is_deeply $item,
     },
     'returned page is complete and correct';
 
-$item = $be->get( page => 'NOT_FOUND' );
+$item = $be->get( pages => 'NOT_FOUND' );
 is $item, undef, 'get() NOT_FOUND returns undef';
 
 my %about_page = (
@@ -46,10 +46,10 @@ my %about_page = (
     markdown => qq{# About\n\nThis is my about page\n},
 );
 
-$id = $be->create( page => \%about_page );
+$id = $be->create( pages => \%about_page );
 is $id, 'about', 'id is returned';
 ok -e $temp->child( "$id.markdown" ), 'created about page exists';
-$item = $be->get( page => $id );
+$item = $be->get( pages => $id );
 ok $item, 'id from create() works for get()';
 is_deeply $item,
     {
@@ -58,7 +58,7 @@ is_deeply $item,
     },
     'returned page is complete and correct';
 
-my $result = $be->list( 'page' );
+my $result = $be->list( 'pages' );
 is $result->{total}, 2, 'list() reports two pages total';
 is_deeply $result->{items},
     [
@@ -73,7 +73,7 @@ is_deeply $result->{items},
     ],
     'list() reports correct items';
 
-$result = $be->list( page => { path => 'index' } );
+$result = $be->list( pages => { path => 'index' } );
 is $result->{total}, 1, 'list() reports one page matching path "index"';
 is_deeply $result->{items},
     [
@@ -84,9 +84,9 @@ is_deeply $result->{items},
     ],
     'list() reports correct items matching path "index"';
 
-$success = $be->set( page => 'index', { markdown => '# Index' } );
+$success = $be->set( pages => 'index', { markdown => '# Index' } );
 ok $success, 'partial set was successful';
-$item = $be->get( page => 'index' );
+$item = $be->get( pages => 'index' );
 is_deeply $item,
     {
         %index_page,
@@ -95,7 +95,7 @@ is_deeply $item,
     },
     'set item is correct';
 
-$success = $be->delete( page => 'about' );
+$success = $be->delete( pages => 'about' );
 ok $success, 'delete was successful';
 ok !-f $temp->child( "about.markdown" ), 'file is deleted';
 

@@ -28,6 +28,13 @@ Markdown files with YAML frontmatter, like a L<Statocles> site. In other
 words, this module works with a flat-file database made up of YAML
 + Markdown files.
 
+=head2 Collections
+
+You should configure the C<pages> collection to have all of the fields
+that could be in the frontmatter of your Markdown files. This is JSON Schema
+and will be validated, but if you're using the Yancy editor, make sure only
+to use L<the types Yancy supports|Yancy::Help::Config/Types>.
+
 =head2 Limitations
 
 This backend should support everything L<Yancy::Backend> supports, though
@@ -155,27 +162,32 @@ sub delete {
 sub read_schema {
     my ( $self, @collections ) = @_;
     my %page_schema = (
+        title => 'Pages',
         required => [qw( path markdown )],
         'x-id-field' => 'path',
         'x-view-item-url' => '/{path}',
+        'x-list-columns' => [ 'title', 'path' ],
         properties => {
             path => {
                 type => 'string',
+                'x-order' => 2,
             },
             title => {
                 type => 'string',
+                'x-order' => 1,
             },
             markdown => {
                 type => 'string',
                 format => 'markdown',
                 'x-html-field' => 'html',
+                'x-order' => 3,
             },
             html => {
                 type => 'string',
             },
         },
     );
-    return @collections ? \%page_schema : { page => \%page_schema };
+    return @collections ? \%page_schema : { pages => \%page_schema };
 }
 
 sub _id_to_path {
