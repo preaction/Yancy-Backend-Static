@@ -36,9 +36,14 @@ sub new {
 
 sub create {
     my ( $self, $coll, $params ) = @_;
-    my $path = $self->path->child( $params->{path} );
+
+    my $path = $self->path->child( $self->_id_to_path( $params->{path} ) );
     my $content = $self->_deparse_content( $params );
-    $self->path->child( $params->{path} )->make_path->spurt( $content );
+    if ( !-d $path->dirname ) {
+        $path->dirname->make_path;
+    }
+    $path->spurt( $content );
+
     return $params->{path};
 }
 
@@ -52,13 +57,17 @@ sub get {
     }
     else {
         # Clean up the input path
-        $id =~ s/[.]html$//;
+        $id =~ s/\.\w+$//;
         $id .= '.markdown';
     }
 
     my $path = $self->path->child( $id );
+    #; say "Getting path $id: $path";
     return undef unless -f $path;
-    return $self->_parse_content( $path->slurp );
+
+    my $item = $self->_parse_content( $path->slurp );
+    $item->{path} = $self->_path_to_id( $path->to_rel( $self->path ) );
+    return $item;
 }
 
 sub list {
@@ -68,9 +77,11 @@ sub list {
 
     my @items;
     my $total = 0;
-    PATH: for my $path ( $self->path->list_tree->each ) {
+    PATH: for my $path ( sort $self->path->list_tree->each ) {
         my $item = $self->_parse_content( $path->slurp );
-        for my $key ( %$params ) {
+        $item->{path} = $self->_path_to_id( $path->to_rel( $self->path ) );
+        for my $key ( keys %$params ) {
+            #; say "list testing: $key - $item->{ $key } ne $params->{ $key }";
             next PATH if $item->{ $key } ne $params->{ $key };
         }
         push @items, $item;
@@ -118,6 +129,27 @@ sub read_schema {
         },
     );
     return @collections ? \%page_schema : { page => \%page_schema };
+}
+
+sub _id_to_path {
+    my ( $self, $id ) = @_;
+    # Allow indexes to be created
+    if ( $id =~ m{(?:^|\/)index$} ) {
+        $id .= '.markdown';
+    }
+    # Allow full file paths to be created
+    elsif ( $id =~ m{\.\w+$} ) {
+        $id =~ s{\.\w+$}{.markdown};
+    }
+    # Anything else should create a file
+    else {
+        $id .= '.markdown';
+    }
+}
+
+sub _path_to_id {
+    my ( $self, $path ) = @_;
+    return $path->basename( '.markdown' );
 }
 
 #=sub _parse_content
@@ -187,7 +219,6 @@ sub _parse_content {
 
     return \%item;
 }
-
 
 sub _deparse_content {
     my ( $self, $item ) = @_;

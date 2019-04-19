@@ -1,7 +1,7 @@
 
 =head1 DESCRIPTION
 
-This tests the L<Yancy::Backend::Static> module.
+This tests a website built with the L<Yancy::Backend::Static> module.
 
 =head1 SEE ALSO
 
