@@ -95,9 +95,10 @@ sub list {
 }
 
 sub set {
-    my ( $self, $coll, $params ) = @_;
+    my ( $self, $coll, $id, $params ) = @_;
     my $content = $self->_deparse_content( $params );
-    $self->path->child( $params->{path} )->make_path->spurt( $content );
+    my $path = $self->path->child( $self->_id_to_path( $id ) );
+    $path->spurt( $content );
     return 1;
 }
 
