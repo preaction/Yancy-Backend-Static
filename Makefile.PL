@@ -17,7 +17,9 @@ my %WriteMakefileArgs = (
   "MIN_PERL_VERSION" => "5.014",
   "NAME" => "Yancy::Backend::Static",
   "PREREQ_PM" => {
+    "JSON::PP" => 0,
     "Text::Markdown" => 0,
+    "YAML" => 0,
     "Yancy" => "1.023"
   },
   "TEST_REQUIRES" => {
@@ -39,8 +41,10 @@ my %FallbackPrereqs = (
   "File::Spec" => 0,
   "IO::Handle" => 0,
   "IPC::Open3" => 0,
+  "JSON::PP" => 0,
   "Test::More" => "1.001005",
   "Text::Markdown" => 0,
+  "YAML" => 0,
   "Yancy" => "1.023"
 );
 
