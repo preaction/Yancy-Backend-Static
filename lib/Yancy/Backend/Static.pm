@@ -120,11 +120,12 @@ sub read_schema {
                 type => 'string',
             },
             markdown => {
+                type => 'string',
                 format => 'markdown',
                 'x-html-field' => 'html',
             },
             html => {
-                format => 'html',
+                type => 'string',
             },
         },
     );
