@@ -84,4 +84,19 @@ is_deeply $result->{items},
     ],
     'list() reports correct items matching path "index"';
 
+$success = $be->set( page => 'index', { markdown => '# Index' } );
+ok $success, 'partial set was successful';
+$item = $be->get( page => 'index' );
+is_deeply $item,
+    {
+        %index_page,
+        markdown => "# Index\n",
+        html => qq{<h1>Index</h1>\n},
+    },
+    'set item is correct';
+
+$success = $be->delete( page => 'about' );
+ok $success, 'delete was successful';
+ok !-f $temp->child( "about.markdown" ), 'file is deleted';
+
 done_testing;

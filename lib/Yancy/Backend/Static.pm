@@ -65,7 +65,11 @@ sub get {
     #; say "Getting path $id: $path";
     return undef unless -f $path;
 
-    my $item = $self->_parse_content( $path->slurp );
+    my $item = eval { $self->_parse_content( $path->slurp ) };
+    if ( $@ ) {
+        warn sprintf 'Could not load file %s: %s', $path, $@;
+        return undef;
+    }
     $item->{path} = $self->_path_to_id( $path->to_rel( $self->path ) );
     return $item;
 }
@@ -78,7 +82,11 @@ sub list {
     my @items;
     my $total = 0;
     PATH: for my $path ( sort $self->path->list_tree->each ) {
-        my $item = $self->_parse_content( $path->slurp );
+        my $item = eval { $self->_parse_content( $path->slurp ) };
+        if ( $@ ) {
+            warn sprintf 'Could not load file %s: %s', $path, $@;
+            next;
+        }
         $item->{path} = $self->_path_to_id( $path->to_rel( $self->path ) );
         for my $key ( keys %$params ) {
             #; say "list testing: $key - $item->{ $key } ne $params->{ $key }";
@@ -96,15 +104,22 @@ sub list {
 
 sub set {
     my ( $self, $coll, $id, $params ) = @_;
-    my $content = $self->_deparse_content( $params );
     my $path = $self->path->child( $self->_id_to_path( $id ) );
+    # Load the current file to turn a partial set into a complete
+    # set
+    my %item = (
+        %{ $self->_parse_content( $path->slurp ) },
+        %$params,
+    );
+    my $content = $self->_deparse_content( \%item );
+    #; say "Set to $path:\n$content";
     $path->spurt( $content );
     return 1;
 }
 
 sub delete {
     my ( $self, $coll, $id ) = @_;
-    return !!unlink $self->path->child( $id );
+    return !!unlink $self->path->child( $self->_id_to_path( $id ) );
 }
 
 sub read_schema {
