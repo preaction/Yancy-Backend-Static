@@ -3,6 +3,8 @@ requires "Text::Markdown" => "0";
 requires "YAML" => "0";
 requires "Yancy" => "1.023";
 requires "perl" => "5.014";
+requires "Mojo::Base" => "0";
+requires "Mojo::File" => "0";
 
 on 'test' => sub {
   requires "ExtUtils::MakeMaker" => "0";
