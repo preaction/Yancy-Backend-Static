@@ -145,11 +145,14 @@ sub set {
     # Load the current file to turn a partial set into a complete
     # set
     my %item = (
-        %{ $self->_parse_content( $path->slurp ) },
+        -f $path ? %{ $self->_parse_content( $path->slurp ) } : (),
         %$params,
     );
     my $content = $self->_deparse_content( \%item );
     #; say "Set to $path:\n$content";
+    if ( !-d $path->dirname ) {
+        $path->dirname->make_path;
+    }
     $path->spurt( $content );
     return 1;
 }
