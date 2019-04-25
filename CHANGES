@@ -2,6 +2,13 @@ Changelog for Yancy-Backend-Static
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Fixed `set()` not working with Yancy::Command::backend::copy. The
+      `set()` method now can create new files with the given ID, and
+      should probably be preferred to `create()` (which does not require
+      an ID, but uses the `path` attribute).
+
 0.001     2019-04-19 17:05:22-05:00 America/Chicago
 
     - Initial release
