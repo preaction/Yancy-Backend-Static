@@ -2,6 +2,8 @@ Changelog for Yancy-Backend-Static
 
 {{ $NEXT }}
 
+0.003     2019-04-25 09:50:29+01:00 Europe/London
+
     [Fixed]
 
     - Fixed a missing prereq reported by CPANTS. Thanks @manwar!
