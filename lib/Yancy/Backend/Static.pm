@@ -56,6 +56,7 @@ use Mojo::File;
 use Text::Markdown;
 use YAML ();
 use JSON::PP ();
+use Yancy::Util qw( match order_by );
 
 has collections =>;
 has path =>;
@@ -125,16 +126,13 @@ sub list {
             next;
         }
         $item->{path} = $self->_path_to_id( $path->to_rel( $self->path ) );
-        for my $key ( keys %$params ) {
-            #; say "list testing: $key - $item->{ $key } ne $params->{ $key }";
-            next PATH if $item->{ $key } ne $params->{ $key };
-        }
+        next unless match( $params, $item );
         push @items, $item;
         $total++;
     }
 
     return {
-        items => \@items,
+        items => order_by( $opt->{order_by} // 'path', \@items ),
         total => $total,
     };
 }
@@ -165,6 +163,7 @@ sub delete {
 sub read_schema {
     my ( $self, @collections ) = @_;
     my %page_schema = (
+        type => 'object',
         title => 'Pages',
         required => [qw( path markdown )],
         'x-id-field' => 'path',
