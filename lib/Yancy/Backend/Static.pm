@@ -12,7 +12,7 @@ our $VERSION = '0.004';
     get '/*id',
         controller => 'yancy',
         action => 'get',
-        collection => 'page',
+        schema => 'page',
         id => 'index', # Default to index page
         template => 'page',
         ;
@@ -28,9 +28,9 @@ Markdown files with YAML frontmatter, like a L<Statocles> site. In other
 words, this module works with a flat-file database made up of YAML
 + Markdown files.
 
-=head2 Collections
+=head2 Schemas
 
-You should configure the C<pages> collection to have all of the fields
+You should configure the C<pages> schema to have all of the fields
 that could be in the frontmatter of your Markdown files. This is JSON Schema
 and will be validated, but if you're using the Yancy editor, make sure only
 to use L<the types Yancy supports|Yancy::Help::Config/Types>.
@@ -42,7 +42,7 @@ some list() queries may not work (please make a pull request).
 
 =head2 Future Developments
 
-This backend could be enhanced to provide collections for static files
+This backend could be enhanced to provide schema for static files
 (CSS, JavaScript, etc...) and templates.
 
 =head1 SEE ALSO
@@ -58,21 +58,21 @@ use YAML ();
 use JSON::PP ();
 use Yancy::Util qw( match order_by );
 
-has collections =>;
+has schema =>;
 has path =>;
 has markdown_parser => sub { Text::Markdown->new };
 
 sub new {
-    my ( $class, $backend, $collections ) = @_;
+    my ( $class, $backend, $schema ) = @_;
     my ( undef, $path ) = split /:/, $backend, 2;
     return $class->SUPER::new( {
         path => Mojo::File->new( $path ),
-        collections => $collections,
+        schema => $schema,
     } );
 }
 
 sub create {
-    my ( $self, $coll, $params ) = @_;
+    my ( $self, $schema, $params ) = @_;
 
     my $path = $self->path->child( $self->_id_to_path( $params->{path} ) );
     my $content = $self->_deparse_content( $params );
@@ -85,7 +85,7 @@ sub create {
 }
 
 sub get {
-    my ( $self, $coll, $id ) = @_;
+    my ( $self, $schema, $id ) = @_;
 
     # Allow directory path to work
     if ( -d $self->path->child( $id ) ) {
@@ -112,7 +112,7 @@ sub get {
 }
 
 sub list {
-    my ( $self, $coll, $params, $opt ) = @_;
+    my ( $self, $schema, $params, $opt ) = @_;
     $params ||= {};
     $opt ||= {};
 
@@ -138,7 +138,7 @@ sub list {
 }
 
 sub set {
-    my ( $self, $coll, $id, $params ) = @_;
+    my ( $self, $schema, $id, $params ) = @_;
     my $path = $self->path->child( $self->_id_to_path( $id ) );
     # Load the current file to turn a partial set into a complete
     # set
@@ -156,12 +156,12 @@ sub set {
 }
 
 sub delete {
-    my ( $self, $coll, $id ) = @_;
+    my ( $self, $schema, $id ) = @_;
     return !!unlink $self->path->child( $self->_id_to_path( $id ) );
 }
 
 sub read_schema {
-    my ( $self, @collections ) = @_;
+    my ( $self, @schemas ) = @_;
     my %page_schema = (
         type => 'object',
         title => 'Pages',
@@ -189,7 +189,7 @@ sub read_schema {
             },
         },
     );
-    return @collections ? \%page_schema : { pages => \%page_schema };
+    return @schemas ? \%page_schema : { pages => \%page_schema };
 }
 
 sub _id_to_path {
