@@ -110,6 +110,28 @@ is_deeply $result->{items},
     ],
     'list() reports correct items in correct order';
 
+$result = $be->list( 'pages', {}, { order_by => { -desc => 'path' }, limit => 1 } );
+is $result->{total}, 2, 'list() with limit still reports two pages total';
+is_deeply $result->{items},
+    [
+        {
+            %index_page,
+            html => qq{<h1>Index</h1>\n\n<p>This is my index page</p>\n},
+        },
+    ],
+    'list() returns only 1 item, because of limit';
+
+$result = $be->list( 'pages', {}, { order_by => { -desc => 'path' }, offset => 1, limit => 1 } );
+is $result->{total}, 2, 'list() with limit+offset still reports two pages total';
+is_deeply $result->{items},
+    [
+        {
+            %about_page,
+            html => qq{<h1>About</h1>\n\n<p>This is my about page</p>\n},
+        },
+    ],
+    'list() returns only 1 item, the 2nd item, because of limit+offset';
+
 $success = $be->set( pages => 'index', { markdown => '# Index' } );
 ok $success, 'partial set was successful';
 $item = $be->get( pages => 'index' );

@@ -131,8 +131,13 @@ sub list {
         $total++;
     }
 
+    $opt->{order_by} //= 'path';
+    my $ordered_items = order_by( $opt->{order_by}, \@items );
+
+    $opt->{offset} //= 0;
+    my $end = $opt->{limit} ? $opt->{offset} + $opt->{limit} - 1 : $#items;
     return {
-        items => order_by( $opt->{order_by} // 'path', \@items ),
+        items => [ @{$ordered_items}[ $opt->{offset} .. $end ] ],
         total => $total,
     };
 }
