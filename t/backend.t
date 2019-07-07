@@ -132,6 +132,17 @@ is_deeply $result->{items},
     ],
     'list() returns only 1 item, the 2nd item, because of limit+offset';
 
+$result = $be->list( 'pages', {}, { order_by => { -desc => 'path' }, offset => 1, limit => 50 } );
+is $result->{total}, 2, 'list() with limit+offset beyond the end still reports two pages total';
+is_deeply $result->{items},
+    [
+        {
+            %about_page,
+            html => qq{<h1>About</h1>\n\n<p>This is my about page</p>\n},
+        },
+    ],
+    'list() returns only 1 item, the 2nd item, even when limit wants more';
+
 $success = $be->set( pages => 'index', { markdown => '# Index' } );
 ok $success, 'partial set was successful';
 $item = $be->get( pages => 'index' );

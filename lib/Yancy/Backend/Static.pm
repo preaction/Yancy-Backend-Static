@@ -134,10 +134,14 @@ sub list {
     $opt->{order_by} //= 'path';
     my $ordered_items = order_by( $opt->{order_by}, \@items );
 
-    $opt->{offset} //= 0;
-    my $end = $opt->{limit} ? $opt->{offset} + $opt->{limit} - 1 : $#items;
+    my $start = $opt->{offset} // 0;
+    my $end = $opt->{limit} ? $start + $opt->{limit} - 1 : $#items;
+    if ( $end > $#items ) {
+        $end = $#items;
+    }
+
     return {
-        items => [ @{$ordered_items}[ $opt->{offset} .. $end ] ],
+        items => [ @{$ordered_items}[ $start .. $end ] ],
         total => $total,
     };
 }
