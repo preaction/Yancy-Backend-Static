@@ -2,6 +2,8 @@ Changelog for Yancy-Backend-Static
 
 {{ $NEXT }}
 
+0.005     2019-08-20 20:41:57-05:00 America/Chicago
+
     [Fixed]
 
     - Fixed relative links on index files. Browsers require a trailing
