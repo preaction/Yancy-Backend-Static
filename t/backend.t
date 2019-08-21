@@ -174,4 +174,13 @@ $success = $be->delete( pages => 'about' );
 ok $success, 'delete was successful';
 ok !-f $temp->child( "about.markdown" ), 'file is deleted';
 
+$item = $be->get( pages => '/' );
+is_deeply $item,
+    {
+        %index_page,
+        markdown => "# Index\n",
+        html => qq{<h1>Index</h1>\n},
+    },
+    'get item with trailing slash works correctly';
+
 done_testing;

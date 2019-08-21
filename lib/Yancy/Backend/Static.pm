@@ -87,10 +87,10 @@ sub create {
 sub get {
     my ( $self, $schema, $id ) = @_;
 
-    # Allow directory path to work
-    if ( -d $self->path->child( $id ) ) {
-        $id =~ s{/$}{};
-        $id .= '/index.markdown';
+    # Allow directory path to work. Must have a trailing slash to ensure
+    # that relative links in the file work correctly.
+    if ( $id =~ m{/$} && -d $self->path->child( $id ) ) {
+        $id .= 'index.markdown';
     }
     else {
         # Clean up the input path
