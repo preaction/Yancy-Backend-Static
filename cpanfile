@@ -10,6 +10,7 @@ on 'test' => sub {
   requires "IO::Handle" => "0";
   requires "IPC::Open3" => "0";
   requires "Test::More" => "1.001005";
+  requires "Test::Mojo" => "0";
 };
 
 on 'test' => sub {
