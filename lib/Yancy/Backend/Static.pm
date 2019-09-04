@@ -57,6 +57,7 @@ use Text::Markdown;
 use YAML ();
 use JSON::PP ();
 use Yancy::Util qw( match order_by );
+use Encode;
 
 has schema =>;
 has path =>;
@@ -237,7 +238,7 @@ sub _parse_content {
     my ( $self, $content ) = @_;
     my %item;
 
-    my @lines = split /\n/, $content;
+    my @lines = split /\n/, decode_utf8 $content;
     # YAML frontmatter
     if ( @lines && $lines[0] =~ /^---/ ) {
         shift @lines;
