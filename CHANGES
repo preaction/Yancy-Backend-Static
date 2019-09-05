@@ -2,6 +2,8 @@ Changelog for Yancy-Backend-Static
 
 {{ $NEXT }}
 
+0.006     2019-09-04 21:08:57-05:00 America/Chicago
+
     [Fixed]
 
     - Correctly decode Markdown files as UTF-8 so that high-byte
