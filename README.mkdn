@@ -7,7 +7,7 @@ Yancy::Backend::Static - Build a Yancy site from static Markdown files
 
 # VERSION
 
-version 0.005
+version 0.006
 
 # SYNOPSIS
 
@@ -60,9 +60,10 @@ This backend could be enhanced to provide schema for static files
 
 Doug Bell <preaction@cpan.org>
 
-# CONTRIBUTOR
+# CONTRIBUTORS
 
-Mohammad S Anwar <mohammad.anwar@yahoo.com>
+- Mohammad S Anwar <mohammad.anwar@yahoo.com>
+- Wojtek Bażant <wojtek.bazant@sanger.ac.uk>
 
 # COPYRIGHT AND LICENSE
 
