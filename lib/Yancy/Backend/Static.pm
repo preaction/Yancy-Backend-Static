@@ -216,6 +216,7 @@ sub _id_to_path {
     else {
         $id .= '.markdown';
     }
+    return $id;
 }
 
 sub _path_to_id {
