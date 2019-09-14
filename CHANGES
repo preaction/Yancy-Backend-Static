@@ -2,6 +2,8 @@ Changelog for Yancy-Backend-Static
 
 {{ $NEXT }}
 
+0.007     2019-09-13 23:09:59-05:00 America/Chicago
+
     [Fixed]
 
     - Fixed paths ending in an extension not working. Thanks @wbazant!
