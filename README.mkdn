@@ -7,7 +7,7 @@ Yancy::Backend::Static - Build a Yancy site from static Markdown files
 
 # VERSION
 
-version 0.006
+version 0.007
 
 # SYNOPSIS
 
@@ -63,6 +63,7 @@ Doug Bell <preaction@cpan.org>
 # CONTRIBUTORS
 
 - Mohammad S Anwar <mohammad.anwar@yahoo.com>
+- Wojtek Bażant &lt;wojciech.bazant+ebi@gmail.com>
 - Wojtek Bażant <wojtek.bazant@sanger.ac.uk>
 
 # COPYRIGHT AND LICENSE
