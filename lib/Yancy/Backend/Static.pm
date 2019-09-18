@@ -255,6 +255,14 @@ sub _parse_content {
         # Before the marker is YAML
         eval {
             %item = %{ YAML::Load( join "\n", splice( @lines, 0, $i ), "" ) };
+            %item = map {$_ => do {
+              # YAML.pm 1.29 doesn't parse 'true', 'false' as booleans
+              # like the schema suggests: https://yaml.org/spec/1.2/spec.html#id2803629
+              my $v = $item{$_};
+              $v = JSON::PP::false if $v eq 'false';
+              $v = JSON::PP::true if $v eq 'true';
+              $v
+            }} keys %item;
         };
         if ( $@ ) {
             die qq{Error parsing YAML\n$@};
