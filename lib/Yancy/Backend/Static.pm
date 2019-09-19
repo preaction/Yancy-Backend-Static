@@ -305,7 +305,10 @@ sub _parse_content {
 sub _deparse_content {
     my ( $self, $item ) = @_;
     my %data =
-        map { $_ => $item->{ $_ } }
+        map { $_ => do {
+        my $v = $item->{ $_ };
+          JSON::PP::is_bool($v) ? $v ? 'true' : 'false' : $v
+        }}
         grep { !/^(?:markdown|html|path)$/ }
         keys %$item;
     return YAML::Dump( \%data ) . "---\n". $item->{markdown};

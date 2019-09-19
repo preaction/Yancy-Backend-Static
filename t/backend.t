@@ -12,6 +12,7 @@ L<Yancy>
 use Test::More;
 use Mojo::File qw( path tempdir );
 use Yancy::Backend::Static;
+use JSON::PP ( );
 
 my $temp = tempdir();
 my $be = Yancy::Backend::Static->new(
@@ -21,12 +22,14 @@ my $be = Yancy::Backend::Static->new(
 my %index_page = (
     path => 'index',
     title => 'Index',
+    is_draft => JSON::PP::false,
     markdown => qq{# Index\n\nThis is my index page\n},
 );
 
 my $id = $be->create( pages => \%index_page );
 is $id, 'index', 'id is returned';
 ok -e $temp->child( "$id.markdown" ), 'created index page exists';
+like $temp->child( "$id.markdown" )->slurp, qr {false}, 'not a draft';
 
 my $item = $be->get( pages => $id );
 ok $item, 'id from create() works for get()';
