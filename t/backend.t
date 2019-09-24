@@ -173,6 +173,18 @@ is_deeply $item,
     },
     'set item is correct';
 
+$success = $be->set( pages => 'contact', { path => 'contact-different-path' } );
+ok $success, 'partial set changing a path was successful';
+$item = $be->get( pages => 'contact-different-path' );
+is_deeply $item,
+    {
+        %contact_page,
+        html => qq{<h1>Contact Me</h1>\n},
+        path => 'contact-different-path',
+    },
+    'set item is correct';
+ok !-f $temp->child( "contact.markdown" ), 'file is deleted';
+
 $success = $be->delete( pages => 'about' );
 ok $success, 'delete was successful';
 ok !-f $temp->child( "about.markdown" ), 'file is deleted';
