@@ -156,11 +156,19 @@ sub set {
         -f $path ? %{ $self->_parse_content( $path->slurp ) } : (),
         %$params,
     );
-    my $content = $self->_deparse_content( \%item );
-    #; say "Set to $path:\n$content";
+
+    if ( $params->{path} ) {
+      my $new_path = $self->path->child( $self->_id_to_path( $params->{path} ) );
+      if ( -f $path and $new_path ne $path ) {
+         $path->remove;
+      }
+      $path = $new_path;
+    }
     if ( !-d $path->dirname ) {
         $path->dirname->make_path;
     }
+    my $content = $self->_deparse_content( \%item );
+    #; say "Set to $path:\n$content";
     $path->spurt( $content );
     return 1;
 }
