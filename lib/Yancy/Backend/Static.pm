@@ -318,7 +318,7 @@ sub _deparse_content {
         }}
         grep { !/^(?:markdown|html|path)$/ }
         keys %$item;
-    return YAML::Dump( \%data ) . "---\n". $item->{markdown};
+    return ( %data ? YAML::Dump( \%data ) . "---\n" : "") . ( $item->{markdown} // "" );
 }
 
 1;
