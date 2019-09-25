@@ -2,6 +2,8 @@ Changelog for Yancy-Backend-Static
 
 {{ $NEXT }}
 
+0.008     2019-09-24 20:42:09-05:00 America/Chicago
+
     [Fixed]
 
     - Fixed changing the "path" field in the item. Previously it would
