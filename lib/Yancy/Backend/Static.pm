@@ -250,10 +250,9 @@ sub _parse_content {
     my @lines = split /\n/, decode_utf8 $content;
     # YAML frontmatter
     if ( @lines && $lines[0] =~ /^---/ ) {
-        shift @lines;
 
         # The next --- is the end of the YAML frontmatter
-        my ( $i ) = grep { $lines[ $_ ] =~ /^---/ } 0..$#lines;
+        my ( $i ) = grep { $lines[ $_ ] =~ /^---/ } 1..$#lines;
 
         # If we did not find the marker between YAML and Markdown
         if ( !defined $i ) {
