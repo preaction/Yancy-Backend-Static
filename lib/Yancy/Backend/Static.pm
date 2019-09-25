@@ -266,8 +266,8 @@ sub _parse_content {
               # YAML.pm 1.29 doesn't parse 'true', 'false' as booleans
               # like the schema suggests: https://yaml.org/spec/1.2/spec.html#id2803629
               my $v = $item{$_};
-              $v = JSON::PP::false if $v eq 'false';
-              $v = JSON::PP::true if $v eq 'true';
+              $v = JSON::PP::false if $v and $v eq 'false';
+              $v = JSON::PP::true if $v and $v eq 'true';
               $v
             }} keys %item;
         };
