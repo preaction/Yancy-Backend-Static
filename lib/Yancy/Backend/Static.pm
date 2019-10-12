@@ -6,19 +6,20 @@ our $VERSION = '0.010';
 
     use Mojolicious::Lite;
     plugin Yancy => {
-        backend => 'static:/home/doug/www/preaction.me',
+        backend => 'static:.',
         read_schema => 1,
     };
-    get '/*id',
+    get '/*id', {
         controller => 'yancy',
         action => 'get',
-        schema => 'page',
+        schema => 'pages',
         id => 'index', # Default to index page
-        template => 'page',
-        ;
+        template => 'default', # default.html.ep below
+    };
     app->start;
     __DATA__
-    @@ page.html.ep
+    @@ default.html.ep
+    % title $item->{title};
     <%== $item->{html} %>
 
 =head1 DESCRIPTION
@@ -44,6 +45,113 @@ some list() queries may not work (please make a pull request).
 
 This backend could be enhanced to provide schema for static files
 (CSS, JavaScript, etc...) and templates.
+
+=head1 GETTING STARTED
+
+To get started using this backend to make a simple static website, first
+create a file called C<myapp.pl> with the following contents:
+
+    #!/usr/bin/env perl
+    use Mojolicious::Lite;
+    plugin Yancy => {
+        backend => 'static:.',
+        read_schema => 1,
+    };
+    get '/*id', {
+        controller => 'yancy',
+        action => 'get',
+        schema => 'pages',
+        template => 'default',
+        layout => 'default',
+        id => 'index',
+    };
+    app->start;
+    __DATA__
+    @@ default.html.ep
+    % title $item->{title};
+    <%== $item->{html} %>
+    @@ layouts/default.html.ep
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title><%= title %></title>
+        <link rel="stylesheet" href="/yancy/bootstrap.css">
+    </head>
+    <body>
+        <main class="container">
+            %= content
+        </main>
+        <script src="/yancy/jquery.js"></script>
+        <script src="/yancy/bootstrap.js"></script>
+    </body>
+    </html>
+
+Once this is done, run the development webserver using C<perl myapp.pl
+daemon>:
+
+    $ perl myapp.pl daemon
+    Server available at http://127.0.0.1:3000
+
+Then open C<http://127.0.0.1:3000/yancy> in your web browser to see the
+L<Yancy> editor.
+
+=for html <img style="max-width: 100%" src="https://raw.githubusercontent.com/preaction/Yancy-Backend-Static/master/eg/public/editor-1.png">
+
+You should first create an C<index> page by clicking the "Add Item"
+button to create a new page and giving the page a C<path> of C<index>.
+
+=for html <img style="max-width: 100%" src="https://raw.githubusercontent.com/preaction/Yancy-Backend-Static/master/eg/public/editor-2.png">
+
+Once this page is created, you can visit your new page either by
+clicking the "eye" icon on the left side of the table, or by navigating
+to L<http://127.0.0.1:3000>.
+
+=for html <img style="max-width: 100%" src="https://raw.githubusercontent.com/preaction/Yancy-Backend-Static/master/eg/public/editor-3.png">
+
+=head2 Adding Images and Files
+
+To add other files to your site (images, scripts, stylesheets, etc...),
+create a directory called C<public> and put your file in there.  All the
+files in the C<public> folder are available to use in your website.
+
+To add an image using Markdown, use C<![](path/to/image.jpg)>.
+
+=head2 Customize Template and Layout
+
+The easiest way to customize the look of the site is to edit the layout
+template. Templates in Mojolicious can be in external files in
+a C<templates> directory, or they can be in the C<myapp.pl> script below
+C<__DATA__>.
+
+The layout your site uses currently is called
+C<layouts/default.html.ep>.  The two main things to put in a layout are
+C<< <%= title %> >> for the page's title and C<< <%= content %> >> for
+the page's content. Otherwise, the layout can be used to add design and
+navigation for your site.
+
+=head1 ADVANCED FEATURES
+
+=head2 Custom Metadata Fields
+
+You can add additional metadata fields to your page by adding them to
+your schema, like so:
+
+    plugin Yancy => {
+        backend => 'static:.',
+        read_schema => 1,
+        schema => {
+            pages => {
+                properties => {
+                    # Add an optional 'author' field
+                    author => { type => [ 'string', 'null' ] },
+                },
+            },
+        },
+    };
+
+These additional fields can be used in your template through the
+C<$item> hash reference (C<< $item->{author} >>).  See
+L<Yancy::Help::Config> for more information about configuring a schema.
 
 =head1 SEE ALSO
 
