@@ -9,6 +9,7 @@ on 'test' => sub {
   requires "File::Spec" => "0";
   requires "IO::Handle" => "0";
   requires "IPC::Open3" => "0";
+  requires "Test::Mojo" => "0";
   requires "Test::More" => "1.001005";
 };
 
