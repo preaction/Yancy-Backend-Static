@@ -2,6 +2,8 @@ Changelog for Yancy-Backend-Static
 
 {{ $NEXT }}
 
+0.009     2019-10-11 22:46:20-05:00 America/Chicago
+
     [Fixed]
 
     - Fixed files without frontmatter being saved incorrectly. Thanks
