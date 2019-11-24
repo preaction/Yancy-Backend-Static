@@ -165,7 +165,12 @@ use Text::Markdown;
 use YAML ();
 use JSON::PP ();
 use Yancy::Util qw( match order_by );
-use Encode;
+
+# Can't use open ':locale' because it caches the current locale (so it
+# won't work in tests unless we create a new process with the changed
+# locale...)
+use I18N::Langinfo qw( langinfo CODESET );
+use Encode qw( encode decode );
 
 has schema =>;
 has path =>;
@@ -184,12 +189,7 @@ sub create {
     my ( $self, $schema, $params ) = @_;
 
     my $path = $self->path->child( $self->_id_to_path( $params->{path} ) );
-    my $content = $self->_deparse_content( $params );
-    if ( !-d $path->dirname ) {
-        $path->dirname->make_path;
-    }
-    $path->spurt( $content );
-
+    $self->_write_file( $path, $params );
     return $params->{path};
 }
 
@@ -211,7 +211,7 @@ sub get {
     #; say "Getting path $id: $path";
     return undef unless -f $path;
 
-    my $item = eval { $self->_parse_content( $path->slurp ) };
+    my $item = eval { $self->_read_file( $path ) };
     if ( $@ ) {
         warn sprintf 'Could not load file %s: %s', $path, $@;
         return undef;
@@ -229,7 +229,7 @@ sub list {
     my $total = 0;
     PATH: for my $path ( sort $self->path->list_tree->each ) {
         next unless $path =~ /[.](?:markdown|md)$/;
-        my $item = eval { $self->_parse_content( $path->slurp ) };
+        my $item = eval { $self->_read_file( $path ) };
         if ( $@ ) {
             warn sprintf 'Could not load file %s: %s', $path, $@;
             next;
@@ -261,7 +261,7 @@ sub set {
     # Load the current file to turn a partial set into a complete
     # set
     my %item = (
-        -f $path ? %{ $self->_parse_content( $path->slurp ) } : (),
+        -f $path ? %{ $self->_read_file( $path ) } : (),
         %$params,
     );
 
@@ -272,12 +272,7 @@ sub set {
       }
       $path = $new_path;
     }
-    if ( !-d $path->dirname ) {
-        $path->dirname->make_path;
-    }
-    my $content = $self->_deparse_content( \%item );
-    #; say "Set to $path:\n$content";
-    $path->spurt( $content );
+    $self->_write_file( $path, \%item );
     return 1;
 }
 
@@ -342,6 +337,27 @@ sub _path_to_id {
     return join '/', grep !!$_, $dir, $path->basename( '.markdown' );
 }
 
+sub _read_file {
+    my ( $self, $path ) = @_;
+    my $locale_encoding = langinfo( CODESET );
+    open my $fh, '<', $path or die "Could not open $path for reading: $!";
+    local $/;
+    return $self->_parse_content( decode( $locale_encoding, scalar <$fh>, Encode::FB_CROAK ) );
+}
+
+sub _write_file {
+    my ( $self, $path, $item ) = @_;
+    if ( !-d $path->dirname ) {
+        $path->dirname->make_path;
+    }
+    #; say "Writing to $path:\n$content";
+    my $locale_encoding = langinfo( CODESET );
+    open my $fh, '>', $path
+        or die "Could not open $path for overwriting: $!";
+    print $fh encode( $locale_encoding, $self->_deparse_content( $item ), Encode::FB_CROAK );
+    return;
+}
+
 #=sub _parse_content
 #
 #   my $item = $backend->_parse_content( $path->slurp );
@@ -355,7 +371,7 @@ sub _parse_content {
     my ( $self, $content ) = @_;
     my %item;
 
-    my @lines = split /\n/, decode_utf8 $content;
+    my @lines = split /\n/, $content;
     # YAML frontmatter
     if ( @lines && $lines[0] =~ /^---/ ) {
 
