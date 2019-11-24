@@ -7,7 +7,7 @@ Yancy::Backend::Static - Build a Yancy site from static Markdown files
 
 # VERSION
 
-version 0.011
+version 0.012
 
 # SYNOPSIS
 
@@ -165,6 +165,19 @@ your schema, like so:
 These additional fields can be used in your template through the
 `$item` hash reference (`$item->{author}`).  See
 [Yancy::Help::Config](https://metacpan.org/pod/Yancy::Help::Config) for more information about configuring a schema.
+
+## Character Encoding
+
+By default, this backend detects the locale of your current environment
+and assumes the files you read and write should be in that encoding. If
+this is incorrect (if, for example, you always want to read/write UTF-8
+files), add a `?encoding=...` to the backend string:
+
+    use Mojolicious::Lite;
+    plugin Yancy => {
+        backend => 'static:.?encoding=UTF-8',
+        read_schema => 1,
+    };
 
 # SEE ALSO
 
