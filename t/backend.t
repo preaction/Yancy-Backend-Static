@@ -231,6 +231,10 @@ subtest 'encoding' => sub {
         return;
     }
 
+    my $be = Yancy::Backend::Static->new(
+        'static:' . $temp,
+    );
+
     my %decoded_page = (
         title => 'Test ' . $id_decoded,
         path => $id_decoded,

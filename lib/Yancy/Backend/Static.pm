@@ -153,6 +153,19 @@ These additional fields can be used in your template through the
 C<$item> hash reference (C<< $item->{author} >>).  See
 L<Yancy::Help::Config> for more information about configuring a schema.
 
+=head2 Character Encoding
+
+By default, this backend detects the locale of your current environment
+and assumes the files you read and write should be in that encoding. If
+this is incorrect (if, for example, you always want to read/write UTF-8
+files), add a C<?encoding=...> to the backend string:
+
+    use Mojolicious::Lite;
+    plugin Yancy => {
+        backend => 'static:.?encoding=UTF-8',
+        read_schema => 1,
+    };
+
 =head1 SEE ALSO
 
 L<Yancy>, L<Statocles>
@@ -175,11 +188,15 @@ use Encode qw( encode decode );
 has schema =>;
 has path =>;
 has markdown_parser => sub { Text::Markdown->new };
+has encoding => sub { langinfo( CODESET ) };
 
 sub new {
     my ( $class, $backend, $schema ) = @_;
     my ( undef, $path ) = split /:/, $backend, 2;
+    $path =~ s/^([^?]+)\?(.+)$/$1/;
+    my %attrs = map { split /=/ } split /\&/, $2 // '';
     return $class->SUPER::new( {
+        %attrs,
         path => Mojo::File->new( $path ),
         schema => $schema,
     } );
@@ -339,10 +356,9 @@ sub _path_to_id {
 
 sub _read_file {
     my ( $self, $path ) = @_;
-    my $locale_encoding = langinfo( CODESET );
     open my $fh, '<', $path or die "Could not open $path for reading: $!";
     local $/;
-    return $self->_parse_content( decode( $locale_encoding, scalar <$fh>, Encode::FB_CROAK ) );
+    return $self->_parse_content( decode( $self->encoding, scalar <$fh>, Encode::FB_CROAK ) );
 }
 
 sub _write_file {
@@ -351,10 +367,9 @@ sub _write_file {
         $path->dirname->make_path;
     }
     #; say "Writing to $path:\n$content";
-    my $locale_encoding = langinfo( CODESET );
     open my $fh, '>', $path
         or die "Could not open $path for overwriting: $!";
-    print $fh encode( $locale_encoding, $self->_deparse_content( $item ), Encode::FB_CROAK );
+    print $fh encode( $self->encoding, $self->_deparse_content( $item ), Encode::FB_CROAK );
     return;
 }
 
