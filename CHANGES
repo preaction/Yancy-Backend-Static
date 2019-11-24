@@ -2,6 +2,8 @@ Changelog for Yancy-Backend-Static
 
 {{ $NEXT }}
 
+0.012     2019-11-24 14:46:18-06:00 America/Chicago
+
     [Added]
 
     - Added an `?encoding=...` override to allow specifying an encoding
