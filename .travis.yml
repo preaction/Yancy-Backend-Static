@@ -7,6 +7,9 @@ matrix:
     include:
         - perl: "5.28"
           env: COVERAGE=1
+        # Test in a different locale
+        - perl: "5.28"
+          env: LC_ALL=C LANG=C
     allow_failures:
         - perl: "blead"
 
