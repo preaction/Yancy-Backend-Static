@@ -2,6 +2,14 @@ Changelog for Yancy-Backend-Static
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Fixed a missing test dependency. Thanks @manwar! [Github #9]
+    - Fixed encoding/decoding files into the current locale. This is
+      necessary because users are intended to edit these files outside
+      of Yancy (with their own editors). Thanks @dagmatritsa for
+      reporting this issue! [Github preaction/Yancy#82]
+
 0.010     2019-10-12 18:08:37-05:00 America/Chicago
 
     [Added]

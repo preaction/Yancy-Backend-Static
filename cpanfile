@@ -1,3 +1,4 @@
+requires "I18N::Langinfo" => "0";
 requires "JSON::PP" => "0";
 requires "Text::Markdown" => "0";
 requires "YAML" => "0";

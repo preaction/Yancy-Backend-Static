@@ -7,7 +7,7 @@ Yancy::Backend::Static - Build a Yancy site from static Markdown files
 
 # VERSION
 
-version 0.010
+version 0.011
 
 # SYNOPSIS
 
