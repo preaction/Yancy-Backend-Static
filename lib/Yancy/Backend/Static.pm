@@ -185,7 +185,7 @@ use Yancy::Util qw( match order_by );
 use I18N::Langinfo qw( langinfo CODESET );
 use Encode qw( encode decode );
 
-has schema =>;
+has schema => sub { +{} };
 has path =>;
 has markdown_parser => sub { Text::Markdown->new };
 has encoding => sub { langinfo( CODESET ) };
@@ -198,7 +198,7 @@ sub new {
     return $class->SUPER::new( {
         %attrs,
         path => Mojo::File->new( $path ),
-        schema => $schema,
+        ( schema => $schema )x!!$schema,
     } );
 }
 
@@ -234,7 +234,19 @@ sub get {
         return undef;
     }
     $item->{path} = $self->_path_to_id( $path->to_rel( $self->path ) );
+    $self->_normalize_item( $schema, $item );
     return $item;
+}
+
+sub _normalize_item {
+    my ( $self, $schema_name, $item ) = @_;
+    return unless my $schema = $self->schema->{ $schema_name };
+    for my $prop_name ( keys %{ $item } ) {
+        next unless my $prop = $schema->{ properties }{ $prop_name };
+        if ( $prop->{type} eq 'array' && ref $item->{ $prop_name } ne 'ARRAY' ) {
+            $item->{ $prop_name } = [ $item->{ $prop_name } ];
+        }
+    }
 }
 
 sub list {
@@ -252,6 +264,7 @@ sub list {
             next;
         }
         $item->{path} = $self->_path_to_id( $path->to_rel( $self->path ) );
+        $self->_normalize_item( $schema, $item );
         next unless match( $params, $item );
         push @items, $item;
         $total++;
