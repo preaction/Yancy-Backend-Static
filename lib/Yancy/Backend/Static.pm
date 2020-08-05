@@ -9,11 +9,11 @@ our $VERSION = '0.013';
         backend => 'static:.',
         read_schema => 1,
     };
-    get '/*id', {
+    get '/*path', {
         controller => 'yancy',
         action => 'get',
         schema => 'pages',
-        id => 'index', # Default to index page
+        path => 'index', # Default to index page
         template => 'default', # default.html.ep below
     };
     app->start;
@@ -57,13 +57,13 @@ create a file called C<myapp.pl> with the following contents:
         backend => 'static:.',
         read_schema => 1,
     };
-    get '/*id', {
+    get '/*path', {
         controller => 'yancy',
         action => 'get',
         schema => 'pages',
         template => 'default',
         layout => 'default',
-        id => 'index',
+        path => 'index',
     };
     app->start;
     __DATA__
