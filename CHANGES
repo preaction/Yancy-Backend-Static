@@ -2,6 +2,8 @@ Changelog for Yancy-Backend-Static
 
 {{ $NEXT }}
 
+0.014     2021-03-04 09:38:26-06:00 America/Chicago
+
     [BREAKING]
 
     - The `path` field is now called `slug`. You must change your route
