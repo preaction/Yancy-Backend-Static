@@ -7,7 +7,7 @@ Yancy::Backend::Static - Build a Yancy site from static Markdown files
 
 # VERSION
 
-version 0.013
+version 0.014
 
 # SYNOPSIS
 
@@ -16,11 +16,11 @@ version 0.013
         backend => 'static:.',
         read_schema => 1,
     };
-    get '/*path', {
+    get '/*slug', {
         controller => 'yancy',
         action => 'get',
         schema => 'pages',
-        path => 'index', # Default to index page
+        slug => 'index', # Default to index page
         template => 'default', # default.html.ep below
     };
     app->start;
@@ -64,13 +64,13 @@ create a file called `myapp.pl` with the following contents:
         backend => 'static:.',
         read_schema => 1,
     };
-    get '/*path', {
+    get '/*slug', {
         controller => 'yancy',
         action => 'get',
         schema => 'pages',
         template => 'default',
         layout => 'default',
-        path => 'index',
+        slug => 'index',
     };
     app->start;
     __DATA__
@@ -107,7 +107,7 @@ Then open `http://127.0.0.1:3000/yancy` in your web browser to see the
 </div>
 
 You should first create an `index` page by clicking the "Add Item"
-button to create a new page and giving the page a `path` of `index`.
+button to create a new page and giving the page a `slug` of `index`.
 
 <div>
     <img style="max-width: 100%" src="https://raw.githubusercontent.com/preaction/Yancy-Backend-Static/master/eg/public/editor-2.png">
