@@ -1,5 +1,5 @@
 package Yancy::Backend::Static;
-our $VERSION = '0.015';
+our $VERSION = '0.016';
 # ABSTRACT: Build a Yancy site from static Markdown files
 
 =head1 SYNOPSIS

@@ -2,6 +2,8 @@ Changelog for Yancy-Backend-Static
 
 {{ $NEXT }}
 
+0.015     2021-05-08 21:12:50-05:00 America/Chicago
+
     - Fixed compatibility with Mojolicious 9.11. Thanks @eserte for
       reporting this issue! [Github #12]
 
