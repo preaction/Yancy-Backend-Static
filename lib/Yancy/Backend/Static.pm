@@ -34,7 +34,8 @@ words, this module works with a flat-file database made up of YAML
 You should configure the C<pages> schema to have all of the fields
 that could be in the frontmatter of your Markdown files. This is JSON Schema
 and will be validated, but if you're using the Yancy editor, make sure only
-to use L<the types Yancy supports|Yancy::Help::Config/Types>.
+to use L<the types Yancy
+supports|https://metacpan.org/pod/Yancy::Guides::Schema#Types>.
 
 =head2 Limitations
 
@@ -151,7 +152,7 @@ your schema, like so:
 
 These additional fields can be used in your template through the
 C<$item> hash reference (C<< $item->{author} >>).  See
-L<Yancy::Help::Config> for more information about configuring a schema.
+L<Yancy::Guides::Schema> for more information about configuring a schema.
 
 =head2 Character Encoding
 
